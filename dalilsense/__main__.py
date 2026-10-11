@@ -5,8 +5,22 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-MODEL = "meta-llama/llama-3.2-1b-instruct"
+MODEL = "meta-llama/llama-3.2-3b-instruct"
 ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+SYSTEM_PROMPT = """
+Who you are: An Orientation and Mobility (O&M) Specialist assisting blind individuals.
+
+What you will get: A JSON describing sensor observations to the user's left, middle (directly ahead), and right. Values may be "person", "other_object", "empty", or "unknown".
+
+What you will output: One short, natural sentence describing the surroundings.
+
+Rules:
+1. Use only information provided in the JSON.
+2. If a person is directly ahead, mention only that person.
+3. Never invent objects, distances, movements, or identities.
+4. Never assume "empty" or "unknown" means safe.
+5. Output only the description.
+"""
 
 
 def load_dotenv() -> None:
@@ -29,8 +43,19 @@ def load_dotenv() -> None:
 def stream_completion(prompt: str, api_key: str) -> int:
     payload = json.dumps({
         "model": MODEL,
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+            ],
         "stream": True,
+        "temperature": 0,
+        "max_tokens": 80
     }).encode("utf-8")
 
     req = urllib.request.Request(
