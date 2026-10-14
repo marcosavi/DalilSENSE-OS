@@ -1,0 +1,3 @@
+{"case_id": "case_000", "input": {"left": "no_object", "middle": "no_object", "right": "no_object"}, "output": "Left: none; Ahead: none; Right: none", "latency_ms": 1431, "model": "qwen3:1.7b", "prompt_sha": "d622592cc38d"}
+{"case_id": "case_001", "input": {"left": "no_object", "middle": "no_object", "right": "person"}, "output": "Left: none; Ahead: none; Right: person", "latency_ms": 526, "model": "qwen3:1.7b", "prompt_sha": "d622592cc38d"}
+{"case_id": "case_002", "input": {"left": "no_object", "middle": "no_object", "right": "other_object"}, "output": "Left: none; Ahead: none; Right: object", "latency_ms": 541, "model": "qwen3:1.7b", "prompt_sha": "d622592cc38d"}
