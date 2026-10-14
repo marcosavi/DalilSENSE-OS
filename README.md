@@ -1,10 +1,11 @@
 # DalilSENSE - WP3: Situational Awareness Narration
 
-## Objective
+## Objectives
 Test whether small, open-weight text-to-text models can turn structured sensor observations into factual descriptions for blind and low-vision users without inventing information.
 
 ## Target deployment
-Raspberry Pi 5 + AI HAT+ 2, operating offline.
+- Raspberry Pi 5 + AI HAT+ 2
+- Offline operation
 
 ## Models
 | Model | Size | Local Mac testing |
@@ -13,6 +14,8 @@ Raspberry Pi 5 + AI HAT+ 2, operating offline.
 | Qwen2.5 Instruct | 1.5B | `qwen2.5:1.5b` |
 | Qwen3 | 1.7B | `qwen3:1.7b` |
 | Llama 3.2 Instruct | 3B | `llama3.2:3b` (larger comparison) |
+
+### Model characteristics
 
 - These models have downloadable weights.
 - Local Mac tests measure narration quality, not performance.
@@ -23,9 +26,14 @@ Raspberry Pi 5 + AI HAT+ 2, operating offline.
 - RQ2. Does the output include prioritization guidelines?
 - RQ3. Does the output follow specific length?
 
+## Experiments
+
+### Experiment 1 — Baseline hallucination (RQ1)
+Measure how often a small, instruction-tuned model fabricates information when given only a minimal, guideline-free task description. Starting with Qwen2.5-1.5B Instruct over the 27-case synthetic set in `JSON_test/`, outputs are hand-labeled by the researcher. Deliverable: per-model hallucination rate with a short taxonomy of what was added (distances, movement, identity, safety claims, out-of-vocabulary objects). Automated judging is out of scope — it belongs to a later experiment. Full protocol: `experiments/exp1.md`.
+
 ## Dataset
-**64 synthetic JSON test cases:**
-- Exhaustive combinations of `person`, `other_object`, `empty`, and `unknown` across `left`, `middle`, and `right`.
+**27 synthetic JSON test cases:**
+- Exhaustive combinations of `no_object`, `person`, and `other_object` across `left`, `middle`, and `right` (3³ = 27). Values match the dataset labels from `dataset-quickstart.ipynb` (`CLASS_NAMES`).
 
 Example input:
 ```json
