@@ -1,0 +1,249 @@
+{
+  "name": "qwen3:1.7b",
+  "model": "qwen3:1.7b",
+  "model_digest": "0f45bae8cd2fec097cf09b400b078cf42388a1f5702f4058d2d6d641a09db46d",
+  "model_details": {
+    "parent_model": "",
+    "format": "gguf",
+    "family": "qwen3",
+    "families": [
+      "qwen3"
+    ],
+    "parameter_size": "2.0B",
+    "quantization_level": "Q4_K_M",
+    "context_length": 40960,
+    "embedding_length": 2048
+  },
+  "system_prompt": "You are a helpful visual describer, who can see and describe for BVI people. You will not mention this is a JSON; just describe it. Please ensure you provide information about the absence of what is in the left, middle, and right with ONLY ONE sentence at maximum. Most importantly, each sentence should be less than 4 words.",
+  "options": {
+    "temperature": 0.0,
+    "num_predict": 128,
+    "num_ctx": 1024,
+    "seed": 42
+  },
+  "think": false,
+  "selection": "first",
+  "sample_seed": null,
+  "cases": [
+    {
+      "case_id": "case_000",
+      "input": {
+        "left": "no_object",
+        "middle": "no_object",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_001",
+      "input": {
+        "left": "no_object",
+        "middle": "no_object",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_002",
+      "input": {
+        "left": "no_object",
+        "middle": "no_object",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_003",
+      "input": {
+        "left": "no_object",
+        "middle": "person",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_004",
+      "input": {
+        "left": "no_object",
+        "middle": "person",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_005",
+      "input": {
+        "left": "no_object",
+        "middle": "person",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_006",
+      "input": {
+        "left": "no_object",
+        "middle": "other_object",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_007",
+      "input": {
+        "left": "no_object",
+        "middle": "other_object",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_008",
+      "input": {
+        "left": "no_object",
+        "middle": "other_object",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_009",
+      "input": {
+        "left": "person",
+        "middle": "no_object",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_010",
+      "input": {
+        "left": "person",
+        "middle": "no_object",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_011",
+      "input": {
+        "left": "person",
+        "middle": "no_object",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_012",
+      "input": {
+        "left": "person",
+        "middle": "person",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_013",
+      "input": {
+        "left": "person",
+        "middle": "person",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_014",
+      "input": {
+        "left": "person",
+        "middle": "person",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_015",
+      "input": {
+        "left": "person",
+        "middle": "other_object",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_016",
+      "input": {
+        "left": "person",
+        "middle": "other_object",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_017",
+      "input": {
+        "left": "person",
+        "middle": "other_object",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_018",
+      "input": {
+        "left": "other_object",
+        "middle": "no_object",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_019",
+      "input": {
+        "left": "other_object",
+        "middle": "no_object",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_020",
+      "input": {
+        "left": "other_object",
+        "middle": "no_object",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_021",
+      "input": {
+        "left": "other_object",
+        "middle": "person",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_022",
+      "input": {
+        "left": "other_object",
+        "middle": "person",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_023",
+      "input": {
+        "left": "other_object",
+        "middle": "person",
+        "right": "other_object"
+      }
+    },
+    {
+      "case_id": "case_024",
+      "input": {
+        "left": "other_object",
+        "middle": "other_object",
+        "right": "no_object"
+      }
+    },
+    {
+      "case_id": "case_025",
+      "input": {
+        "left": "other_object",
+        "middle": "other_object",
+        "right": "person"
+      }
+    },
+    {
+      "case_id": "case_026",
+      "input": {
+        "left": "other_object",
+        "middle": "other_object",
+        "right": "other_object"
+      }
+    }
+  ],
+  "id": "87dae0a1-d1c2-4620-b373-73e3a61984be",
+  "created_at": "2026-10-15T11:19:18Z",
+  "prompt_sha": "ebb094970a340f2c4d7abc38b0f8b49c90cc0ff9579818fc46770b8179068f4c",
+  "dataset_sha": "367ea9d86716d166f7e87b95e9d8989e1cd724dcfddb539d0812b09901d14b5d"
+}
