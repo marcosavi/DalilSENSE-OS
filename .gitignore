@@ -6,3 +6,4 @@ dataset-quickstart.ipynb
 staticfiles/
 *.sqlite3
 *.sqlite3-journal
+.claude/
