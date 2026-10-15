@@ -1,6 +1,7 @@
 /* Experiment setup and review reuse the shared Montserrat and button styles. */
-.steps { display: flex; align-items: center; flex-wrap: wrap; gap: 20px 40px; padding: 0 0 32px; margin: 0 0 44px; list-style: none; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 14px; }
-.steps [aria-current="step"] { padding: 9px 16px; border-radius: var(--radius); background: var(--accent); color: var(--on-accent); font-weight: 600; }
+.steps { display: flex; align-items: center; flex-wrap: wrap; gap: 20px 40px; padding: 0 0 24px; margin: 0 0 32px; list-style: none; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.run-toolbar { padding-bottom: 24px; margin-bottom: 32px; border-bottom: 1px solid var(--line); }
+.steps [aria-current="step"] { padding: 9px 16px; border-radius: var(--radius); background: #000; color: #fff; font-weight: 600; }
 .configuration { max-width: 1040px; }
 body.experiments-page main { padding-bottom: 36px; }
 .setup-section { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
@@ -52,6 +53,8 @@ body.experiments-page main { padding-bottom: 36px; }
 .models-section { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .models-table { width: 100%; border-collapse: collapse; }
 .models-table th, .models-table td { padding: 16px 28px; text-align: left; border-bottom: 1px solid var(--line); }
+.model-icon { padding: 16px 12px; text-align: center; }
+.model-icon img { height: 32px; width: 32px; object-fit: contain; }
 .models-table th { font-weight: 600; font-size: 14px; background: var(--subtle); color: var(--ink); }
 .models-table tbody td { font-size: 14px; }
 .models-table tbody tr:last-child td { border-bottom: none; }

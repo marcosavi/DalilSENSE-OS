@@ -1,16 +1,47 @@
 const runState = JSON.parse(document.getElementById('run-state').textContent);
 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-const query = document.getElementById('case-query');
-function filterCases() {
-  const term = query.value.trim().toLowerCase();
-  let count = 0;
-  document.querySelectorAll('.case-card').forEach(card => {
-    card.hidden = !card.textContent.toLowerCase().includes(term);
-    if (!card.hidden) count++;
-  });
-  document.getElementById('search-count').textContent = term ? count + ' matching cases' : '';
+
+// Carousel navigation and progress bar.
+const carousel = document.querySelector('.case-list.carousel');
+const cards = carousel ? [...carousel.querySelectorAll('.case-card')] : [];
+const prevBtn = document.getElementById('nav-prev');
+const nextBtn = document.getElementById('nav-next');
+const counterEl = document.getElementById('carousel-current');
+const progressFill = document.getElementById('progress-fill');
+const progressPercent = document.getElementById('progress-percent');
+let currentIndex = 0;
+
+function showCard(index) {
+  if (!cards.length) return;
+  currentIndex = Math.max(0, Math.min(index, cards.length - 1));
+  cards.forEach((card, i) => card.classList.toggle('active', i === currentIndex));
+  if (counterEl) counterEl.textContent = currentIndex + 1;
+  if (prevBtn) prevBtn.disabled = currentIndex === 0;
+  if (nextBtn) nextBtn.disabled = currentIndex === cards.length - 1;
 }
-query.addEventListener('input', filterCases);
+
+function updateProgress() {
+  if (!progressFill || !cards.length) return;
+  const reviewed = cards.filter(card => {
+    const status = card.querySelector('.review-status');
+    return status && status.textContent.trim().startsWith('Saved');
+  }).length;
+  const pct = Math.round((reviewed / cards.length) * 100);
+  progressFill.style.width = pct + '%';
+  progressPercent.textContent = pct + '%';
+}
+
+if (carousel) {
+  showCard(0);
+  updateProgress();
+  if (prevBtn) prevBtn.addEventListener('click', () => showCard(currentIndex - 1));
+  if (nextBtn) nextBtn.addEventListener('click', () => showCard(currentIndex + 1));
+  document.addEventListener('keydown', event => {
+    if (event.target.matches('input, textarea')) return;
+    if (event.key === 'ArrowLeft') showCard(currentIndex - 1);
+    if (event.key === 'ArrowRight') showCard(currentIndex + 1);
+  });
+}
 async function poll() {
   try {
     const response = await fetch(runState.statusUrl, {cache: 'no-store'});
@@ -34,7 +65,6 @@ async function poll() {
       const output = document.querySelector('#row-' + error.case_id + ' .output');
       if (output) { output.textContent = 'Error: ' + error.message; output.className = 'output error'; }
     });
-    if (query.value) filterCases();
   } catch (error) {
     document.getElementById('run-status').textContent = 'Connection interrupted. Retrying…';
   }
@@ -75,6 +105,10 @@ document.querySelectorAll('.review-form').forEach(form => {
       document.getElementById('stat-rate').textContent = data.rate;
       document.getElementById('stat-rate-sub').textContent = data.n_h + ' of ' + data.n_lbl + ' reviewed';
       message.textContent = 'Saved: ' + selected.textContent;
+      updateProgress();
+      if (carousel && currentIndex < cards.length - 1) {
+        setTimeout(() => showCard(currentIndex + 1), 400);
+      }
     } catch (error) { message.textContent = error.message; }
     finally { controls.forEach(control => { control.disabled = false; }); }
   });

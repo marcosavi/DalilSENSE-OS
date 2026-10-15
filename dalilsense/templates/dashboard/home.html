@@ -5,7 +5,7 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/workspace.css' %}">{% endblock %}
 {% block content %}
 <div class="project-heading"><span class="mark runs-mark">Runs</span><h1>Review experiments that have been generated so far.</h1></div>
-<div class="setup-actions"><a class="button button-primary" href="{% url 'experiments:index' %}">Configure a new experiment →</a></div>
+<div class="setup-actions"><a class="button button-primary" href="{% url 'experiments:index' %}">Configure a new experiment</a></div>
 {% if has_runs %}
 <ul class="run-list" aria-label="Saved runs">
   {% for run in runs %}
@@ -37,6 +37,7 @@
   <table class="models-table">
     <thead>
       <tr>
+        <th></th>
         <th>Name</th>
         <th>Size / Usage</th>
         <th>Context</th>
@@ -45,7 +46,19 @@
     </thead>
     <tbody>
       {% for model in models %}
+      {% with model_lower=model.name|lower %}
       <tr>
+        <td class="model-icon">
+          {% if "qwen" in model_lower %}
+            <img src="{% static 'qwen-logo.webp' %}" alt="Qwen" title="Qwen">
+          {% elif "llama" in model_lower %}
+            <img src="{% static 'meta-logo.jpg' %}" alt="Meta" title="Meta">
+          {% elif "liquid" in model_lower or "lfm" in model_lower %}
+            <img src="{% static 'liquid-logo.png' %}" alt="Liquid" title="Liquid">
+          {% elif "gemma" in model_lower %}
+            <img src="{% static 'gemma-logo.webp' %}" alt="Gemma" title="Gemma">
+          {% endif %}
+        </td>
         <td class="model-name">
           {{ model.name }}
           {% if "latest" in model.name %}<span class="latest-badge">latest</span>{% endif %}
@@ -54,6 +67,7 @@
         <td>{{ model.details.context_length|default:"40K" }}</td>
         <td>Text</td>
       </tr>
+      {% endwith %}
       {% endfor %}
     </tbody>
   </table>

@@ -15,7 +15,7 @@
 .run-status:empty { display: none; }
 .prompt-details { margin-bottom: 32px; color: var(--muted); font-size: 13px; }
 .prompt-details pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.8; padding: 24px; background: var(--subtle); border-radius: var(--radius); }
-.results-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; margin-bottom: 20px; }
+.results-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; margin-bottom: 20px; padding-top: 24px; border-top: 1px solid var(--line); }
 .results-heading h2 { margin: 0; font-size: 18px; font-weight: 600; }
 .results-heading p { margin: 0; color: var(--muted); font-size: 13px; }
 .table-wrap { overflow: auto; border-block: 1px solid var(--line); }
@@ -38,6 +38,23 @@ tbody tr:focus-within { background: #fff5f6; }
 .running { color: var(--accent); }
 .error { color: var(--danger); }
 .review-choices { display: flex; gap: 8px; }
+.review-choices .verdict[data-verdict="yes"]:hover { border-color: #dc2626; color: #dc2626; }
+.review-choices .verdict[data-verdict="yes"][aria-pressed="true"] { border-color: #dc2626; background: #fee2e2; color: #991b1b; box-shadow: inset 0 0 0 1px #dc2626, inset 0 -5px 0 #dc2626; }
+.review-choices .verdict[data-verdict="no"]:hover { border-color: #16a34a; color: #16a34a; }
+.review-choices .verdict[data-verdict="no"][aria-pressed="true"] { border-color: #16a34a; background: #dcfce7; color: #166534; box-shadow: inset 0 0 0 1px #16a34a, inset 0 -5px 0 #16a34a; }
+
+/* Carousel review mode: show one case at a time. */
+.case-list.carousel .case-card { display: none; }
+.case-list.carousel .case-card.active { display: block; }
+.carousel-nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.carousel-counter { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 500; }
+.carousel-nav .button { min-height: 40px; padding: 8px 20px; }
+
+/* Progress bar above the carousel. */
+.progress-bar-container { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.progress-label { color: var(--navy); font-size: 15px; font-weight: 600; min-width: 48px; font-variant-numeric: tabular-nums; }
+.progress-track { flex: 1; height: 10px; background: #e5e7eb; border-radius: 100px; overflow: hidden; }
+.progress-fill { height: 100%; background: #4ade80; border-radius: 100px; transition: width .3s ease; }
 
 @media (max-width: 1100px) {
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }

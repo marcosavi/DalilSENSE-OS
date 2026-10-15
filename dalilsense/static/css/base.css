@@ -61,9 +61,12 @@ h2 { font-size: 18px; line-height: 24px; letter-spacing: -0.5px; font-weight: 50
 /* Shared page shell. */
 .brand-bar { border-bottom: 1px solid var(--line); background: var(--surface); }
 .brand-inner, main, .site-footer { width: 100%; max-width: 52rem; margin-inline: auto; padding-inline: 40px; }
-.brand-inner { display: flex; justify-content: flex-start; align-items: center; gap: 32px; padding-block: 12px 22px; }
+.brand-inner { display: flex; justify-content: space-between; align-items: center; gap: 32px; padding-block: 12px 22px; min-height: 84px; }
 .brand-logo { display: flex; align-items: center; text-decoration: none; color: var(--ink); }
 .brand-logo img { display: block; height: 60px; width: auto; }
+.github-link { display: flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; transition: color .15s ease; font-size: 14px; font-weight: 500; line-height: 1; height: 24px; margin-top: 8px; }
+.github-link svg { display: block; flex-shrink: 0; }
+.github-link:hover { color: var(--accent); }
 .header-nav { display: flex; align-items: center; gap: 32px; }
 .header-nav a { color: var(--ink); font-size: 18px; line-height: 24px; letter-spacing: -0.5px; font-family: system-ui, -apple-system, sans-serif; text-decoration: none; transition: color .15s ease; font-weight: 400; }
 .header-nav a:hover { color: var(--accent); }
@@ -81,16 +84,21 @@ summary { width: fit-content; padding-block: 10px; cursor: pointer; }
 
 /* Reference-style actions and choices: subtle corners and clear selected states. */
 button, .button, select, input, textarea { min-height: 48px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--muted); font: 400 14px/1.5 var(--sans); }
-button, .button { display: inline-flex; align-items: center; justify-content: center; padding: 12px 20px; text-align: center; text-decoration: none; cursor: pointer; }
+button, .button { border-radius: 100px; }
+button, .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; text-align: center; text-decoration: none; cursor: pointer; }
 button:hover, .button:hover { border-color: var(--accent); color: var(--accent); }
+button:not(.button-choice):not([aria-pressed]):not(.nav-prev)::after, .button:not(.button-choice):not([aria-pressed]):not(.nav-prev)::after { content: "→"; font-size: 1em; line-height: 1; opacity: .7; transition: transform .15s ease, opacity .15s ease; }
+button:not(.button-choice):not([aria-pressed]):not(.nav-prev):hover::after, .button:not(.button-choice):not([aria-pressed]):not(.nav-prev):hover::after { transform: translateX(3px); opacity: 1; }
+.nav-prev::before { content: "←"; font-size: 1em; line-height: 1; opacity: .7; transition: transform .15s ease, opacity .15s ease; }
+.nav-prev:hover::before { transform: translateX(-3px); opacity: 1; }
 select, input, textarea { padding: 12px; color: var(--ink); }
 textarea { display: block; resize: vertical; }
 select { max-width: 100%; padding-right: 32px; }
 input::placeholder { color: var(--muted); opacity: 1; }
 .button-primary, .button-secondary { min-height: 52px; border-color: transparent; background: var(--accent); color: var(--on-accent); font-weight: 600; }
 .button-primary:hover { background: var(--accent-hover); border-color: transparent; color: var(--on-accent); }
-.button-secondary { background: var(--navy); }
-.button-secondary:hover { background: #081e4b; border-color: transparent; color: var(--on-accent); }
+.button-secondary { background: #000; }
+.button-secondary:hover { background: #222; border-color: transparent; color: var(--on-accent); }
 .button-choice { min-width: 64px; min-height: 52px; padding: 12px 16px; }
 .button-choice[aria-pressed="true"] { border-color: var(--accent); background: var(--selected); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--accent), inset 0 -5px 0 var(--accent); }
 button:disabled { cursor: not-allowed; background: var(--subtle); border-color: var(--line); color: var(--muted); box-shadow: none; }

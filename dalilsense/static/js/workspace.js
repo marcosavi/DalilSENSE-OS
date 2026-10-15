@@ -1,19 +1,34 @@
-const presets = JSON.parse(document.getElementById('prompt-presets').textContent);
+const presetsEl = document.getElementById('prompt-presets');
+const presets = presetsEl ? JSON.parse(presetsEl.textContent) : {};
 const modelSelect = document.getElementById('id_model');
 const modelIcon = document.getElementById('selected-model-icon');
 function updateModelIcon() {
-  const isQwen = modelSelect.value.toLowerCase().split('/').pop().startsWith('qwen');
-  modelIcon.hidden = !isQwen;
-  modelSelect.parentElement.classList.toggle('has-model-icon', isQwen);
+  const modelName = modelSelect.value.toLowerCase();
+  let iconSrc = '';
+  if (modelName.includes('qwen')) {
+    iconSrc = '/static/qwen-logo.webp';
+  } else if (modelName.includes('llama')) {
+    iconSrc = '/static/meta-logo.jpg';
+  } else if (modelName.includes('liquid') || modelName.includes('lfm')) {
+    iconSrc = '/static/liquid-logo.png';
+  } else if (modelName.includes('gemma')) {
+    iconSrc = '/static/gemma-logo.webp';
+  }
+  const hasIcon = !!iconSrc;
+  if (hasIcon) modelIcon.src = iconSrc;
+  modelIcon.hidden = !hasIcon;
+  modelSelect.parentElement.classList.toggle('has-model-icon', hasIcon);
 }
 modelSelect.addEventListener('change', updateModelIcon);
 updateModelIcon();
 const promptPreset = document.getElementById('prompt-preset');
 const promptInput = document.getElementById('id_system_prompt');
-promptPreset.addEventListener('change', () => {
-  if (presets[promptPreset.value]) promptInput.value = presets[promptPreset.value];
-});
-promptInput.addEventListener('input', () => { promptPreset.value = 'custom'; });
+if (promptPreset && promptInput) {
+  promptPreset.addEventListener('change', () => {
+    if (presets[promptPreset.value]) promptInput.value = presets[promptPreset.value];
+  });
+  promptInput.addEventListener('input', () => { promptPreset.value = 'custom'; });
+}
 const selection = document.getElementById('id_selection');
 function showSelection() {
   document.getElementById('count-field').hidden = selection.value === 'manual';

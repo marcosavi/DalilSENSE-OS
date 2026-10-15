@@ -44,7 +44,7 @@
     </div>
     <details class="advanced" {% if form.errors %}open{% endif %}><summary>Advanced settings</summary><p class="help">Leave optional values blank to use the installed model's defaults. Thinking output is disabled for these experiments.</p><div class="form-grid">{% for field in advanced_fields %}{% include "dashboard/field.html" %}{% endfor %}</div></details>
   </section>
-  <div class="setup-actions"><button class="button-primary" type="submit" {% if not models_available or not available_count %}disabled{% endif %}>Start experiment →</button></div>
+  <div class="setup-actions"><button class="button-primary" type="submit" {% if not models_available or not available_count %}disabled{% endif %}>Start experiment</button></div>
 </form>
 {% endblock %}
 {% block extra_js %}<script src="{% static 'js/workspace.js' %}" defer></script>{% endblock %}

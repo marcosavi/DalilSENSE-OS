@@ -9,5 +9,4 @@ urlpatterns = [
     path("<uuid:run_id>/status/", workspace.status, name="status"),
     path("<uuid:run_id>/review/", workspace.review, name="review"),
     path("<uuid:run_id>/summary/", workspace.summary, name="summary"),
-    path("<uuid:run_id>/export/", workspace.export, name="export"),
 ]

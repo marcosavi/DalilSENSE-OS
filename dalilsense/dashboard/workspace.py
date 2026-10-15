@@ -128,8 +128,3 @@ def summary(request, run_id):
     return response
 
 
-@require_GET
-def export(request, run_id):
-    response = JsonResponse(get_run(run_id), json_dumps_params={"indent": 2})
-    response["Content-Disposition"] = f'attachment; filename="experiment-{run_id}.json"'
-    return response

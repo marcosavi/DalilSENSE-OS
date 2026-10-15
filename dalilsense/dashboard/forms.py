@@ -14,15 +14,7 @@ def model_choices(models):
 
     choices = []
     for model in sorted(models, key=lambda m: (size(m), m["name"])):
-        details = model.get("details", {})
-        info = [model["name"].split(":")[0]]
-        if details.get("parameter_size"):
-            info.append(details["parameter_size"])
-        if details.get("quantization_level"):
-            info.append(details["quantization_level"])
-        if size(model) <= 3:
-            info.append("Small model")
-        choices.append((model["name"], " · ".join(info)))
+        choices.append((model["name"], model["name"]))
     return choices
 
 
@@ -31,7 +23,7 @@ class ExperimentForm(forms.Form):
                            widget=forms.TextInput(attrs={"placeholder": "e.g., Small model, guided prompt"}))
     model = forms.ChoiceField(label="Ollama model")
     system_prompt = forms.CharField(label="System prompt", max_length=20000, strip=False,
-                                    widget=forms.Textarea(attrs={"rows": 10}), initial=SYSTEM_PROMPT.strip())
+                                    widget=forms.Textarea(attrs={"rows": 5}), initial=SYSTEM_PROMPT.strip())
     selection = forms.ChoiceField(label="Choose inputs", initial="first", choices=[
         ("first", "First N cases (sorted by filename)"),
         ("random", "Random sample with a fixed seed"),
@@ -44,7 +36,7 @@ class ExperimentForm(forms.Form):
                                          widget=forms.CheckboxSelectMultiple)
     temperature = forms.FloatField(label="Temperature", min_value=0, max_value=2, initial=DECODING["temperature"],
                                     widget=forms.NumberInput(attrs={"step": "0.1"}), help_text="0–2. Lower values favor less varied outputs.")
-    num_predict = forms.IntegerField(label="Maximum output tokens (num_predict)", min_value=1, max_value=16384,
+    num_predict = forms.IntegerField(label="Maximum output tokens", min_value=1, max_value=16384,
                                      initial=DECODING["num_predict"])
     num_ctx = forms.IntegerField(label="Context window (num_ctx)", min_value=128, max_value=131072,
                                  initial=DECODING["num_ctx"], help_text="Larger windows require more memory; support depends on the model.")
