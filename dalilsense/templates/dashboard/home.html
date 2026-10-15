@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}DalilSENSE — Runs{% endblock %}
+{% block body_class %}home-page{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workspace.css' %}">{% endblock %}
+{% block content %}
+<div class="project-heading"><span class="mark runs-mark">Runs</span><h1>Review experiments that have been generated so far.</h1></div>
+<div class="setup-actions"><a class="button button-primary" href="{% url 'experiments:index' %}">Configure a new experiment →</a></div>
+{% if has_runs %}
+<ul class="run-list" aria-label="Saved runs">
+  {% for run in runs %}
+  <li class="run-card">
+    <a class="run-card-link" href="{% url 'experiments:detail' run_id=run.id %}">
+      <div class="run-card-head">
+        <h2>{{ run.name }}</h2>
+        <span class="run-status run-status-{{ run.status }}">{{ run.status_label }}</span>
+      </div>
+      <dl class="run-card-meta">
+        <div><dt>Model</dt><dd>{{ run.model }}</dd></div>
+        <div><dt>Created</dt><dd>{{ run.created_at }}</dd></div>
+        <div><dt>Generated</dt><dd>{{ run.n_out }}/{{ run.total }}</dd></div>
+        <div><dt>Reviewed</dt><dd>{{ run.n_lbl }}/{{ run.n_out }}</dd></div>
+        <div><dt>Hallucination rate</dt><dd>{{ run.rate }}</dd></div>
+        <div><dt>Mean latency</dt><dd>{% if run.mean_latency_ms %}{{ run.mean_latency_ms }} ms{% else %}—{% endif %}</dd></div>
+      </dl>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty-state">No runs yet. Start one from the <a href="{% url 'experiments:index' %}">Experiments</a> page.</p>
+{% endif %}
+
+{% if models_available %}
+<div class="project-heading"><span class="mark models-mark">Models</span></div>
+<div class="models-section">
+  <table class="models-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Size / Usage</th>
+        <th>Context</th>
+        <th>Input</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for model in models %}
+      <tr>
+        <td class="model-name">
+          {{ model.name }}
+          {% if "latest" in model.name %}<span class="latest-badge">latest</span>{% endif %}
+        </td>
+        <td>{{ model.details.parameter_size|default:"—" }}</td>
+        <td>{{ model.details.context_length|default:"40K" }}</td>
+        <td>Text</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

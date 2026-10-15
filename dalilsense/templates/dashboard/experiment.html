@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}DalilSENSE — Sensor review{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/experiment.css' %}">{% endblock %}
+{% block header_tools %}
+        <details class="header-disclosure" id="case-search">
+          <summary class="icon-button search-button" aria-label="Search cases"><svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="13" cy="13" r="10"/><path d="m21 21 8 8"/></svg></summary>
+          <div class="header-panel" role="search"><label for="case-query">Search cases</label><input id="case-query" type="search" placeholder="Case, sensor value, or output" autocomplete="off"><p class="search-count" id="search-count" role="status"></p></div>
+        </details>
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+<div class="project-heading"><span class="mark">DalilSENSE</span><h1>RQ1 · Sensor narration with a guided prompt</h1></div>
+<div class="stats">
+  <div class="stat-card model-card">
+    <div class="model-selector"><img src="{% static 'qwen-logo.webp' %}" width="36" height="36" alt="" {% if not show_model_logo %}hidden{% endif %}><select id="model" aria-label="Choose model">{% for option in models %}<option value="{{ option }}"{% if option == model %} selected{% endif %}>{{ option }}</option>{% endfor %}</select></div>
+    <div class="model-actions">
+      <button id="run" class="button-primary" {% if running %}disabled{% endif %}>Run all {{ total }}</button>
+      <a class="button button-secondary" href="{% url 'dashboard:summary' %}?model={{ model|urlencode }}" target="_blank">Download summary ↗</a>
+    </div>
+    <p class="run-status" id="run-status" role="status">{{ run_status }}</p>
+  </div>
+  <div class="stat-card metric-card"><div class="label">Generated</div><div class="metric-body"><div class="value" id="stat-runs">{{ n_out }}/{{ total }}</div><div class="sub">cases executed</div></div></div>
+  <div class="stat-card metric-card"><div class="label">Reviewed</div><div class="metric-body"><div class="value" id="stat-labeled">{{ n_lbl }}/{{ total }}</div><div class="sub">human verdicts recorded</div></div></div>
+  <div class="stat-card metric-card"><div class="label">Hallucination rate</div><div class="metric-body"><div class="value" id="stat-rate">{{ rate }}</div><div class="sub" id="stat-rate-sub">{{ n_h }} of {{ n_lbl_or_dash }} reviewed · human labels</div></div></div>
+</div>
+<details class="prompt-details"><summary>View active system prompt</summary><pre>{{ system_prompt }}</pre></details>
+<div class="results-heading">
+  <h2 id="results-title">Case review</h2>
+  <p id="label-help">Mark Yes for unsupported facts. Format is checked separately.</p>
+</div>
+<div class="table-wrap" role="region" aria-labelledby="results-title" tabindex="0">
+<table aria-labelledby="results-title" aria-describedby="label-help">
+<thead><tr><th scope="col">Case</th><th scope="col">Sensor input</th><th scope="col">Model output</th><th scope="col">Latency</th><th scope="col">Hallucination?</th></tr></thead>
+<tbody>
+{% for row in rows %}
+<tr id="row-{{ row.case_id }}" class="{{ row.row_class }}">
+  <td>{{ row.case_id }}</td>
+  <td class="input">{% for title, value in row.sensors %}<div class="sensor"><span>{{ title }}</span><span>{{ value }}</span></div>{% endfor %}</td>
+  <td><div class="{{ row.output_class }}">{{ row.output }}</div><div class="output-meta">{{ row.meta }}</div></td>
+  <td class="latency">{{ row.latency }}</td>
+  <td><div class="review-choices"><button class="lbl button-choice" data-v="y" aria-label="{{ row.case_id }}: hallucination yes" aria-pressed="{{ row.yes|yesno:'true,false' }}"{% if row.disabled %} disabled{% endif %}>Yes</button>
+  <button class="lbl button-choice" data-v="n" aria-label="{{ row.case_id }}: hallucination no" aria-pressed="{{ row.no|yesno:'true,false' }}"{% if row.disabled %} disabled{% endif %}>No</button></div></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}
+{% block extra_js %}
+{{ page_state|json_script:"experiment-state" }}
+<script src="{% static 'js/experiment.js' %}" defer></script>
+{% endblock %}

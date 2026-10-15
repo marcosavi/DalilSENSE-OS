@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}DalilSENSE — Experiments{% endblock %}
+{% block body_class %}experiments-page{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/experiment.css' %}"><link rel="stylesheet" href="{% static 'css/workspace.css' %}">{% endblock %}
+{% block content %}
+<div class="project-heading"><span class="mark">Experiments</span><h1>Configure a run. Generate sensor descriptions. Review the results.</h1></div>
+<ol class="steps" aria-label="Experiment steps"><li aria-current="step">1 · Configure</li><li>2 · Generate</li><li>3 · Review</li></ol>
+{% if connection_error %}<p class="notice error" role="alert">{{ connection_error }} Start Ollama and refresh this page.</p>{% elif not models_available %}<p class="notice" role="status">No installed Ollama models were found. Install a model in Ollama, then refresh this page.</p>{% endif %}
+{% if source %}<p class="notice">Duplicating <strong>{{ source.name }}</strong>. This uses its saved input snapshots, even if the dataset has changed. <a href="{% url 'experiments:index' %}">Start with the current dataset instead</a>.</p>{% endif %}
+<form method="post" id="configuration" class="configuration">
+  {% csrf_token %}
+  {% if form.errors %}<div class="notice error" role="alert">Please correct the fields below. {{ form.non_field_errors }}</div>{% endif %}
+  <section class="setup-section" aria-labelledby="model-heading">
+    <h2 id="model-heading">Model &amp; prompt</h2>
+    <div class="form-grid">
+      {% include "dashboard/field.html" with field=form.name %}
+      <div class="field{% if form.model.errors %} field-invalid{% endif %}">
+        {{ form.model.label_tag }}
+        <div class="model-select-shell">
+          <img id="selected-model-icon" src="{% static 'qwen-logo.webp' %}" width="28" height="28" alt="" hidden>
+          {{ form.model }}
+        </div>
+        {{ form.model.errors }}
+      </div>
+    </div>
+    {% include "dashboard/field.html" with field=form.system_prompt %}
+  </section>
+  <section class="setup-section" aria-labelledby="input-heading">
+    <h2 id="input-heading">Input cases <span class="section-meta">{{ available_count }} JSON files available</span></h2>
+    <div class="form-grid">
+      {% include "dashboard/field.html" with field=form.selection %}
+      <div id="count-field">{% include "dashboard/field.html" with field=form.case_count %}</div>
+      <div id="sample-field">{% include "dashboard/field.html" with field=form.sample_seed %}</div>
+    </div>
+    <div id="cases-field">{% include "dashboard/field.html" with field=form.case_ids %}</div>
+  </section>
+  <section class="setup-section" aria-labelledby="decoding-heading">
+    <h2 id="decoding-heading">Generation settings</h2>
+    <div class="form-grid three-columns">
+      {% include "dashboard/field.html" with field=form.temperature %}
+      {% include "dashboard/field.html" with field=form.num_predict %}
+      {% include "dashboard/field.html" with field=form.num_ctx %}
+    </div>
+    <details class="advanced" {% if form.errors %}open{% endif %}><summary>Advanced settings</summary><p class="help">Leave optional values blank to use the installed model's defaults. Thinking output is disabled for these experiments.</p><div class="form-grid">{% for field in advanced_fields %}{% include "dashboard/field.html" %}{% endfor %}</div></details>
+  </section>
+  <div class="setup-actions"><button class="button-primary" type="submit" {% if not models_available or not available_count %}disabled{% endif %}>Start experiment →</button></div>
+</form>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/workspace.js' %}" defer></script>{% endblock %}

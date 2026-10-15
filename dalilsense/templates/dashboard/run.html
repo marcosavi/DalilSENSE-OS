@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ config.name }} — DalilSENSE{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/experiment.css' %}"><link rel="stylesheet" href="{% static 'css/workspace.css' %}">{% endblock %}
+{% block content %}
+{% csrf_token %}
+<a class="back-link" href="{% url 'experiments:index' %}">← Experiments</a>
+<div class="project-heading"><span class="mark">{{ config.name }}</span><h1>{{ config.model }} · {{ config.created_at }}</h1></div>
+<ol class="steps" aria-label="Experiment steps"><li>1 · Configure</li><li {% if not review_ready %}aria-current="step"{% endif %}>2 · Generate</li><li {% if review_ready %}aria-current="step"{% endif %}>3 · Review</li></ol>
+<div class="run-toolbar"><a class="button button-primary" href="{% url 'experiments:index' %}?duplicate={{ config.id }}">Duplicate settings</a><a class="button" href="{% url 'experiments:summary' config.id %}">Download summary</a><a class="button" href="{% url 'experiments:export' config.id %}">Export run JSON</a></div>
+<div class="stats run-stats">
+  <div class="stat-card"><span class="label">Generated</span><div class="metric-body"><div class="value" id="stat-runs">{{ n_out }}/{{ total }}</div><div class="sub" id="run-status" role="status">{% if not review_ready %}Generating outputs…{% else %}{{ status_label }}{% endif %}</div></div></div>
+  <div class="stat-card"><span class="label">Reviewed</span><div class="metric-body"><div class="value" id="stat-labeled">{{ n_lbl }}/{{ n_out }}</div><div class="sub">generated outputs reviewed</div></div></div>
+  <div class="stat-card"><span class="label">Hallucination rate</span><div class="metric-body"><div class="value" id="stat-rate">{{ rate }}</div><div class="sub" id="stat-rate-sub">{{ n_h }} of {{ n_lbl }} reviewed</div></div></div>
+</div>
+{% if message %}<p class="notice error" role="status">{{ message }}</p>{% endif %}
+{% if errors %}<p class="notice error">{{ errors|length }} case{{ errors|length|pluralize }} failed. Errors are shown below; successful outputs can still be reviewed once generation ends.</p>{% endif %}
+<details class="prompt-details saved-settings"><summary>View saved prompt &amp; settings</summary><dl><dt>Temperature</dt><dd>{{ config.options.temperature }}</dd><dt>Maximum output tokens</dt><dd>{{ config.options.num_predict }}</dd><dt>Context window</dt><dd>{{ config.options.num_ctx }}</dd><dt>Model digest</dt><dd>{{ config.model_digest|default:'Not reported' }}</dd><dt>Prompt fingerprint</dt><dd>{{ config.prompt_sha }}</dd><dt>Input fingerprint</dt><dd>{{ config.dataset_sha }}</dd></dl><pre>{{ config.system_prompt }}</pre><p>Generation options: {% for key, value in config.options.items %}{{ key }}={{ value }}{% if not forloop.last %} · {% endif %}{% endfor %}. Thinking disabled. Unspecified optional settings use model defaults.</p></details>
+<div class="results-heading"><h2 id="review-heading">{% if review_ready %}Review outputs{% else %}Generation progress{% endif %}</h2><p>{% if review_ready %}Mark Yes for unsupported facts. Unreviewed outputs are excluded from the rate.{% else %}Review controls will appear when generation finishes.{% endif %}</p></div>
+<div class="field"><label for="case-query">Filter cases</label><input id="case-query" type="search" placeholder="Case ID, input, or output"><p class="help" id="search-count" role="status"></p></div>
+<div class="case-list">
+{% for row in rows %}
+<article class="case-card" id="row-{{ row.case_id }}" aria-labelledby="title-{{ row.case_id }}">
+  <div class="case-heading"><h3 id="title-{{ row.case_id }}">{{ row.case_id }}</h3><span class="latency">{% if row.latency != None %}{{ row.latency }} ms{% endif %}</span></div>
+  <div class="case-columns"><div><h4>Sensor input</h4><pre class="case-input">{{ row.input }}</pre></div><div><h4>Model output</h4><div class="output{% if row.error %} error{% endif %}">{% if row.error %}Error: {{ row.error }}{% else %}{{ row.output }}{% endif %}</div></div></div>
+  {% if row.can_review %}<form class="review-form" data-case="{{ row.case_id }}">
+    <fieldset><legend>Did it hallucinate?</legend><div class="review-choices"><button type="button" class="button-choice verdict" data-verdict="yes" aria-pressed="{{ row.yes|yesno:'true,false' }}">Yes</button><button type="button" class="button-choice verdict" data-verdict="no" aria-pressed="{{ row.no|yesno:'true,false' }}">No</button></div></fieldset>
+    <div class="field"><label for="notes-{{ row.case_id }}">Review notes <span class="help">(optional)</span></label><textarea id="notes-{{ row.case_id }}" name="notes" rows="2" maxlength="4000" placeholder="Which facts were unsupported?">{{ row.notes }}</textarea></div>
+    <div class="review-actions"><button type="submit" class="button-secondary">Save review</button><span class="review-status help" role="status">{% if row.verdict == 'Unreviewed' %}Unreviewed{% else %}Saved: {{ row.verdict }}{% endif %}</span></div>
+  </form>{% endif %}
+</article>
+{% endfor %}
+</div>
+{% endblock %}
+{% block extra_js %}{{ page_state|json_script:"run-state" }}<script src="{% static 'js/run.js' %}" defer></script>{% endblock %}

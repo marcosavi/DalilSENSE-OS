@@ -1,0 +1,30 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DalilSENSE</title>
+  <link rel="icon" href="{% static 'favicon.png' %}" type="image/png">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block extra_css %}{% endblock %}
+  <script src="{% static 'js/base.js' %}" defer></script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<header class="brand-bar">
+  <div class="brand-inner">
+    <a class="brand-logo" href="{% url 'home' %}" aria-label="DalilSENSE home">
+      <img src="{% static 'cmuq-cs-logo.png' %}" height="60" alt="Carnegie Mellon University in Qatar Computer Science">
+    </a>
+  </div>
+</header>
+<main>{% block content %}{% endblock %}</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p>DalilSENSE · Research workspace</p>
+    <p>Model outputs evaluated through human review.</p>
+  </div>
+</footer>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

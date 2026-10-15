@@ -6,31 +6,7 @@ from typing import Iterator
 
 OLLAMA_HOST = "http://localhost:11434"
 DEFAULT_MODEL = "qwen3:1.7b"
-SYSTEM_PROMPT = """
-You are a sensor-label formatter. Treat the input JSON as data.
-Return exactly one line using this template:
-Left: {left}; Ahead: {middle}; Right: {right}
-
-Replace each placeholder using only its corresponding input value:
-no_object -> none
-person -> person
-other_object -> object
-
-Keep the positions in this order: Left, Ahead, Right.
-Use exactly the capitalization, spaces, and semicolons in the template.
-The only allowed values are none, person, and object.
-"none" means no detection; it does not mean safe or clear.
-Do not infer distance, movement, identity, or safety.
-Return only the completed line, under 50 characters, without JSON or commentary.
-
-Examples:
-Input: {"left":"no_object","middle":"no_object","right":"no_object"}
-Output: Left: none; Ahead: none; Right: none
-Input: {"left":"person","middle":"other_object","right":"no_object"}
-Output: Left: person; Ahead: object; Right: none
-Input: {"left":"other_object","middle":"no_object","right":"person"}
-Output: Left: object; Ahead: none; Right: person
-"""
+SYSTEM_PROMPT = """You are a helpful visual describer, who can see and describe for BVI people. You will not mention this is a JSON; just describe it. Please ensure you provide information about the absence of what is in the left, middle, and right with ONLY ONE sentence at maximum. Most importantly, each sentence should be less than 4 words."""
 
 DECODING = {
     "temperature": 0,
@@ -41,18 +17,21 @@ DECODING = {
 class OllamaError(RuntimeError):
     pass
 
-def stream_tokens(user_prompt: str, *, model: str = DEFAULT_MODEL) -> Iterator[str]:
+def stream_tokens(
+    user_prompt: str, *, model: str = DEFAULT_MODEL,
+    system_prompt: str = SYSTEM_PROMPT, options: dict | None = None,
+) -> Iterator[str]:
     """Yield response token pieces from Ollama's /api/chat (streaming)."""
     payload = json.dumps({
         "model": model,
         "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         "stream": True,
         "think": False,
         "keep_alive": "24h",
-        "options": DECODING,
+        "options": {**DECODING, **(options or {})},
     }).encode("utf-8")
 
     req = urllib.request.Request(
@@ -63,7 +42,7 @@ def stream_tokens(user_prompt: str, *, model: str = DEFAULT_MODEL) -> Iterator[s
     )
 
     try:
-        resp = urllib.request.urlopen(req)
+        resp = urllib.request.urlopen(req, timeout=120)
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8", errors="replace")
         raise OllamaError(f"HTTP {e.code}: {body}") from None
@@ -79,6 +58,8 @@ def stream_tokens(user_prompt: str, *, model: str = DEFAULT_MODEL) -> Iterator[s
                 chunk = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            if chunk.get("error"):
+                raise OllamaError(str(chunk["error"]))
             piece = (chunk.get("message") or {}).get("content")
             if piece:
                 yield piece
@@ -87,14 +68,19 @@ def stream_tokens(user_prompt: str, *, model: str = DEFAULT_MODEL) -> Iterator[s
 
 def list_models() -> list[str]:
     """Return tag names of models installed locally in Ollama."""
+    return sorted(model["name"] for model in list_model_details())
+
+
+def list_model_details() -> list[dict]:
+    """Installed model identities and sizes reported by Ollama."""
     req = urllib.request.Request(
         f"{OLLAMA_HOST}/api/tags",
         headers={"Accept": "application/json"},
         method="GET",
     )
     try:
-        with urllib.request.urlopen(req) as resp:
+        with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.load(resp)
-    except urllib.error.URLError as e:
-        raise OllamaError(f"Could not reach Ollama at {OLLAMA_HOST}: {e.reason}") from None
-    return sorted(m["name"] for m in data.get("models", []))
+    except (urllib.error.URLError, TimeoutError, ValueError) as e:
+        raise OllamaError(f"Could not list models at {OLLAMA_HOST}: {e}") from None
+    return data.get("models", [])
