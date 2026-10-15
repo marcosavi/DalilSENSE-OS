@@ -2,3 +2,7 @@
 __pycache__/
 *.pyc
 dataset-quickstart.ipynb
+.venv/
+staticfiles/
+*.sqlite3
+*.sqlite3-journal
