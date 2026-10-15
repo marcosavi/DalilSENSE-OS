@@ -3,9 +3,9 @@
 - **Model:** `qwen3:1.7b`
 - **Prompt SHA (first 12):** `d622592cc38d`
 - **Runs completed:** 27/27
-- **Labeled:** 0/27
-- **Hallucinations:** 0/0 (rate: —)
-- **Last updated:** 2026-10-14T08:55:12Z
+- **Labeled:** 1/27
+- **Hallucinations:** 1/1 (rate: 100.0%)
+- **Last updated:** 2026-10-15T08:36:55Z
 
 ## System prompt
 
@@ -45,7 +45,7 @@ Output: Left: object; Ahead: none; Right: person
 
 | id | input | output | latency | label |
 |----|-------|--------|---------|-------|
-| case_000 | `{"left": "no_object", "middle": "no_object", "right": "no_object"}` | Left: none; Ahead: none; Right: none | 400ms | — |
+| case_000 | `{"left": "no_object", "middle": "no_object", "right": "no_object"}` | Left: none; Ahead: none; Right: none | 400ms | Y |
 | case_001 | `{"left": "no_object", "middle": "no_object", "right": "person"}` | Left: none; Ahead: none; Right: person | 387ms | — |
 | case_002 | `{"left": "no_object", "middle": "no_object", "right": "other_object"}` | Left: none; Ahead: none; Right: object | 448ms | — |
 | case_003 | `{"left": "no_object", "middle": "person", "right": "no_object"}` | Left: none; Ahead: person; Right: none | 544ms | — |
