@@ -15,7 +15,7 @@ def model_choices(models):
     choices = []
     for model in sorted(models, key=lambda m: (size(m), m["name"])):
         details = model.get("details", {})
-        info = [model["name"]]
+        info = [model["name"].split(":")[0]]
         if details.get("parameter_size"):
             info.append(details["parameter_size"])
         if details.get("quantization_level"):
